@@ -1,0 +1,20 @@
+{
+  "title": "Cloud Identity & Access Automation",
+  "domain": "IDENTITY / IAM / ENTRA ID",
+  "subtitle": "Separate sign-in, application access and employee lifecycle changes.",
+  "scenario": "A healthcare-services workforce platform needed one sign-in layer and a reliable way to grant, change and revoke staff access without giving the business API broad directory-write permissions.",
+  "outcome": "Make employee access repeatable and auditable while keeping lifecycle automation separate from business records and sensitive documents.",
+  "flow": [
+    "Verify the signed access token",
+    "Check the current employee and role",
+    "Queue an exact lifecycle operation",
+    "Apply only the approved access change",
+    "Record the outcome and deny stale access"
+  ],
+  "notes": [
+    "The portable directory is SQLite; it does not make Microsoft Graph calls.",
+    "RSA fixture tokens exercise signature checks. Use an established identity library and provider discovery/JWKS in a hosted application.",
+    "AWS trust examples are design extensions; this repository does not claim a commissioned AWS deployment."
+  ],
+  "boundary": "Sanitized patterns from an operational platform; this screen shows local code with fictional records."
+}
