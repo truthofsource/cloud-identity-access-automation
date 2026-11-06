@@ -4,7 +4,7 @@
 
 ## When the workload grows
 
-Use bounded queue batches, per-person serialization and tenant-aware request IDs used to avoid repeating the same action. Put durable intents and provider receipts in a transactional datastore. Cache public signing keys with rotation support; do not cache employee revocation indefinitely. Separate provisioning, access review and password reset privileges. Measure queue age, unknown outcomes and reconciliation errors before increasing concurrency.
+Process a limited number of requests at a time and keep changes for the same person in order. Give each request an organization-specific ID to avoid repeating it, and save the request and its result reliably. Support changes to public signing keys, and refresh permission checks so removed access does not remain valid indefinitely. Keep account creation, access review and password-reset permissions separate. Measure delays and unclear results before running more work at once.
 
 ## Design choices
 
