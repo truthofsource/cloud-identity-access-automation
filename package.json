@@ -1,0 +1,8 @@
+{
+  "name": "cloud-identity-access-automation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:source": "node --experimental-strip-types --test reference/*.test.ts"
+  }
+}

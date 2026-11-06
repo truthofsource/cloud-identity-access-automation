@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "reviewedDate": "2026-11-06",
+  "files": [
+    {
+      "source": "apps/api/src/provisioning/directoryWorkerBoundary.ts",
+      "sourceSha256": "0ae3aeb68009b4fe68a07b17998944fb4aa31278b56b9759e9b9cb6b5297fff0",
+      "publicFile": "reference/directoryWorkerBoundary.ts",
+      "changes": "Neutral example identifiers/labels; portable dependency boundary"
+    },
+    {
+      "source": "apps/api/src/provisioning/directoryWorkerBoundary.test.ts",
+      "sourceSha256": "0a44088ce21f41fc5af5f7903699cedc96324ba3c07b0016d1036c3c4463be9e",
+      "publicFile": "reference/directoryWorkerBoundary.test.ts",
+      "changes": "Neutral example identifiers/labels; portable dependency boundary"
+    },
+    {
+      "source": "apps/api/src/auth/requireApplicationAppRole.ts",
+      "sourceSha256": "b5fa6f598946a2365fc821b7ae6bb3af54b0f5ea62570eb7dd3b36aa9ee6661b",
+      "publicFile": "reference/applicationRoleClaims.ts",
+      "changes": "Extract actual pure claim-authorization functions; replace SDK payload type with structural type; neutral role names"
+    },
+    {
+      "source": "apps/api/src/auth/requireApplicationAppRole.test.ts",
+      "sourceSha256": "53cf7b204387adec0d55e80efdabeccacdec9821b9f5fc8399edb7dbf4a48004",
+      "publicFile": "reference/applicationRoleClaims.test.ts",
+      "changes": "Neutral example identifiers/labels; portable dependency boundary"
+    },
+    {
+      "source": "apps/api/src/auth/staffAccess.ts",
+      "sourceSha256": "553cb9085cf94df8f6378835827e7652de1cff5884fb9f31fc5455167aeda198",
+      "publicFile": "reference/staffAccess.ts",
+      "changes": "Extract actual pure current-account eligibility predicate; omit database adapter"
+    },
+    {
+      "source": "apps/api/src/auth/staffAccess.test.ts",
+      "sourceSha256": "fa7b835b32c491de3fdc55131e85ea999d84b01af8121a1d7995e3ad8ec463e5",
+      "publicFile": "reference/staffAccess.test.ts",
+      "changes": "Keep first original predicate test; omit Azure/database route integration test"
+    },
+    {
+      "source": "apps/api/src/auth/validateAccessToken.ts",
+      "sourceSha256": "35d91d562ac8e27db35dd66f99167fb97aaea663aa0eceba9b3add690fbbab52",
+      "publicFile": "reference/validateAccessToken.adapter.ts",
+      "changes": "Neutral example identifiers/labels; logic retained"
+    }
+  ],
+  "relatedAdaptations": [
+    {
+      "source": "infra/modules/identity/main.tf",
+      "sourceSha256": "9faa3aa9264de3525e6124ef5bb258d59e25756d4d6fda30b6bda7081e0ae992",
+      "publicFile": "infra/groups.tf",
+      "relationship": "Parameterized reference adaptation, not a byte-identical copy or live deployment"
+    },
+    {
+      "source": "infra/platform/production/directory-worker.tf",
+      "sourceSha256": "b58bd212af2e77c2f11dff978750c7b1ac113f5124f2c599b1410bdfc38e7c3a",
+      "publicFile": "infra/main.tf",
+      "relationship": "Parameterized reference adaptation, not a byte-identical copy or live deployment"
+    }
+  ]
+}

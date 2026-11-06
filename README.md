@@ -29,6 +29,10 @@ Separate sign-in, application authorization and directory changes. The operation
 
 This case study draws on a workforce/operations platform I designed and implemented. Organization details and records are excluded. The public code makes selected patterns reproducible; the screenshots show a working local demonstration with fictional data. [Validation scope](docs/VALIDATION.md) separates that evidence from provider-side acceptance.
 
+### Actual implementation code
+
+This repository now includes selected implementation source and original tests from the operational platform, rather than only a portable reference. Read [what was implemented and accepted](docs/IMPLEMENTATION.md), [the source map](docs/SOURCE-MAP.md) and the dated validation boundaries. Identifying configuration is replaced with examples; original private history and records are excluded.
+
 ## Architecture
 
 ```mermaid
@@ -46,6 +50,7 @@ flowchart LR
 
 | Component | Role in plain words | Implementation |
 | --- | --- | --- |
+| Actual identity boundaries | Dedicated worker, exact linked account, current staff eligibility and app-only roles | [Extracted source](reference/) · [implementation](docs/IMPLEMENTATION.md) |
 | Entra groups and app roles | Map six staff access groups to an existing API, with an explicit group owner. | [View code](infra/groups.tf) |
 | Separate managed identities | Keep API, directory-worker and deployment identities distinct. | [View code](infra/main.tf) |
 | Optional GitHub OIDC trust | Accept one reviewed workload subject; federation remains Off by default. | [View code](infra/main.tf) |
@@ -55,7 +60,16 @@ flowchart LR
 
 ## Proof It Works
 
-**Recorded checks:** 16 unit tests passed · 6 demonstration checks passed · 2 Terraform mock tests passed.
+### Extracted platform code
+
+```bash
+npm run test:source
+```
+
+The selected original tests run offline. [Validation](docs/VALIDATION.md) records current counts and distinguishes them from historical hosted evidence.
+
+
+**Current local checks:** 7 extracted-source tests + 16 portable tests passed · 6 demonstration checks · 2 Terraform mock tests.
 
 These are dated results for this reference implementation, not live Azure/AWS deployment claims. [Test record](docs/validation-results.json) · [Evidence and limitations](docs/VALIDATION.md)
 
@@ -175,6 +189,9 @@ See [strengths, weaknesses and tradeoffs](docs/SCALING.md) for the detailed deci
 | [References](docs/REFERENCES.md) | See technical sources and presentation inspiration |
 
 ## Repository Map
+
+`reference/` contains extracted implementation logic and original selected tests.
+
 
 ```text
 infra/               Terraform source, example inputs and mock plan tests

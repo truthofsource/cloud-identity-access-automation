@@ -43,3 +43,7 @@ Review the caller matrix, identity permissions, durable state, concurrency, log 
 ## Included Terraform
 
 Entra security groups and API app-role assignments, separate API/directory/deployment managed identities, and an optional exact-subject GitHub federated credential. See [the code map, resource inventory and integration boundaries](../infra/README.md). This public root does not provision every box in the application diagram.
+
+## Implementation evidence
+
+[The platform-specific implementation](IMPLEMENTATION.md) records the real service boundaries and historical acceptance. Public adapters omit credentials and use fictional dependencies; a passing local test is not a live permission or network acceptance receipt.

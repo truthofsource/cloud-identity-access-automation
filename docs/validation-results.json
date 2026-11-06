@@ -1,12 +1,13 @@
 {
-  "schema": 1,
-  "executed_at_utc": "2026-11-06T10:19:17.480630+00:00",
-  "python": "3.12.10",
-  "unit_tests": {
-    "passed": 16,
-    "failed": 0
-  },
-  "demonstration_checks": 6,
+  "schema": 2,
+  "executedAtUtc": "2026-11-06T20:25:49.741457+00:00",
+  "project": "cloud-identity-access-automation",
+  "pythonTests": 16,
+  "extractedSourceTests": 7,
+  "sourceRuntime": "Node 22.23.2",
+  "demonstrationChecks": 6,
+  "terraformMockTests": 2,
+  "terraformApplied": false,
   "browser": {
     "project": "cloud-identity-access-automation",
     "desktop": true,
@@ -17,21 +18,37 @@
     "unknownAssetDenied": true,
     "browserErrors": 0
   },
-  "workflow_lint": "actionlint 1.7.12 passed",
-  "secret_scan": {
-    "tool": "Trivy 0.75.0",
-    "scope": "repository source; provider cache excluded",
-    "findings": 0
-  },
-  "source_hashes": {
-    "lab/__init__.py": "95a8296d613b692bb13af925e90204c901108a2c30dfd3ffd4d0fadca55cb5f9",
-    "lab/__main__.py": "d528e758b251fa9f3bf42a326d8644a7055bcd1884112579e88981f33dcbba13",
+  "workflowLint": "actionlint 1.7.12 passed",
+  "sourceSecretScan": "Trivy 0.75.0 zero findings",
+  "azureOperations": 0,
+  "hostedActionsRuns": 0,
+  "nativePostgresqlRestoreExecuted": false,
+  "sourceHashes": {
+    "reference/applicationRoleClaims.test.ts": "1db95056728198d8eeae50cf9c07c3e0884daa7c902305c335a5cb1da8100fa2",
+    "reference/applicationRoleClaims.ts": "e71e64293f516135d90e3919868d183142a2a458595602724150b38750822543",
+    "reference/directoryWorkerBoundary.test.ts": "1f70babee0c81a3e395ee9b6f249d08e991a9503afd61aa58f1abf4f1a7babdb",
+    "reference/directoryWorkerBoundary.ts": "ecc97028ededf98565267c99aa233f98d05dc8d0d2f6d12d822ad194da6a1f91",
+    "reference/README.md": "420d3d2498bdb6ce1187b09b454b9ee3dd5da76f40f79178a8f5814a12f3b4de",
+    "reference/staffAccess.test.ts": "fe8b6c11426f2c33fa842cf2ff8960e7196cebe421c5c7f6b914ed3fdde90bab",
+    "reference/staffAccess.ts": "0a382558fe0738d18f563a21c5ae57178241ed6c73730adfbd9b39ea470313ad",
+    "reference/validateAccessToken.adapter.ts": "35d91d562ac8e27db35dd66f99167fb97aaea663aa0eceba9b3add690fbbab52",
+    "reference/__init__.py": "fb14cb6af789c64afe19d697c0add5955b18f1e588fa870b29dba5ab4f9df03a",
     "lab/demo.py": "1ee90686323e9ae6b91bddf1dd303e8c90c5121078f1e27634479fd3381d82bb",
     "lab/domain.py": "b7f6b617e405c22c50daf08ca011d09afc2ac3dcc0e63ed73dae9d0692e2f8d2",
-    "lab/project.json": "a02c99828fe7cd3e79c43cd98ab7f61adf8dc01dadf7adc86fb53eb9652b0644",
+    "lab/project.json": "a314c66f3d3d7de21bf204e475efd229064615d3892f2afea76455cc031521c3",
+    "lab/workbench.py": "cc2889350fd182e10a74b1153e2c96ef93d5c295724f0ae281d757d1a2e546b5",
+    "lab/__init__.py": "95a8296d613b692bb13af925e90204c901108a2c30dfd3ffd4d0fadca55cb5f9",
+    "lab/__main__.py": "d528e758b251fa9f3bf42a326d8644a7055bcd1884112579e88981f33dcbba13",
     "lab/web/app.js": "3bdf7e85bd6c5229591cacaac6b5360edf402a3498af9491297a6451000693c3",
     "lab/web/index.html": "35cc32683f882bd63f96504ac54907ba88c9eecaf3cecb92ef789bcb01f4529a",
     "lab/web/style.css": "d69c9930ee870f702086a38793f7e4ba9fe42cad77e60eb15dc879a8f6921c3e",
-    "lab/workbench.py": "cc2889350fd182e10a74b1153e2c96ef93d5c295724f0ae281d757d1a2e546b5"
+    "infra/.terraform.lock.hcl": "10777c5c125cf82d264c6538bd2f75eb2a02968a1ff4555a95b80770c41bd4e8",
+    "infra/example.tfvars.example": "b3396632aa6428895559d466569231cfd0539e4ab52d7d3d5f0ae0e08d299f89",
+    "infra/groups.tf": "b415a1c63105da4e23d893cdb9b5b80608d987434d6268a789148497229b13c6",
+    "infra/main.tf": "bae29fffc4a8c9ac36f91e16c48c1998bbc883de8bf5251840fede8e25b5f059",
+    "infra/README.md": "3210c230a5d86713c3dd7eba01f35be334e2e0d62347c52d23e681142629b561",
+    "infra/variables.tf": "3befeb7f6ad9513f5ef364a03c4206471daa637bf8b50b66e14e6f172149db22",
+    "infra/versions.tf": "ed13ee109bc67a9c8e0e64eb17cdf69fe611399e220485922ed6ce16e1008be6",
+    "infra/tests/identity.tftest.hcl": "ea34a8bd0a1deb464d983b863eb6c651383422d9617e91c7775651ab408c74f1"
   }
 }

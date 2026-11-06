@@ -12,9 +12,10 @@
     "Record the outcome and deny stale access"
   ],
   "notes": [
+    "Actual platform source and original offline tests are included under reference/; see implementation and source-map guides.",
     "The portable directory is SQLite; it does not make Microsoft Graph calls.",
     "RSA fixture tokens exercise signature checks. Use an established identity library and provider discovery/JWKS in a hosted application.",
     "AWS trust examples are design extensions; this repository does not claim a commissioned AWS deployment."
   ],
-  "boundary": "Engineering patterns from an operational platform; this screen shows local code with fictional records."
+  "boundary": "Platform-derived local demonstration with fictional data; extracted source/tests are separately reproducible. No fresh cloud acceptance."
 }
