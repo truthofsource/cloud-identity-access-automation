@@ -63,13 +63,37 @@ These are dated results for this reference implementation, not live Azure/AWS de
 
 Separate worker connections submit the same request key. The tests observe one stored operation and revision.
 
+Run from the repository root:
+
+```bash
+python -B -m unittest discover -s tests -p test_concurrency.py -v
+```
+
+**What to look for:** One operation is stored even when separate worker connections submit the same request.
+
 ### 2. Wrong access is rejected
 
 Wrong-audience, expired-token, incorrect-signature and cross-person requests are rejected by the reference.
 
+Run from the repository root:
+
+```bash
+python -B -m unittest discover -s tests -p test_domain.py -v
+```
+
+**What to look for:** The test file exercises valid access plus wrong-audience, expired, invalid-signature and ownership denials.
+
 ### 3. Old tokens cannot bypass a leaver change
 
 The local authorization adapter reads current account state. A previously valid token no longer grants access after the employee is inactive.
+
+Run from the repository root:
+
+```bash
+python -B -m unittest discover -s tests -p test_domain.py -k leaver -v
+```
+
+**What to look for:** The leaver case passes because current account state denies the saved token.
 
 ### 4. Visible results
 
@@ -88,6 +112,8 @@ Expected access denials are successful negative tests. Cloud permissions, networ
 State, saved Terraform plans, private inputs and credentials are excluded through [`.gitignore`](.gitignore). The existing validation workflow is manual-only and has no cloud deployment permission.
 
 ## Run It Locally
+
+The [command reference](docs/COMMANDS.md) includes prerequisites, Windows equivalents, focused checks and evidence notes.
 
 Requires Python 3.12 or newer and the pinned cryptography dependency. Run inside a virtual environment:
 
@@ -138,6 +164,7 @@ See [strengths, weaknesses and tradeoffs](docs/SCALING.md) for the detailed deci
 
 | Guide | What you will find |
 | --- | --- |
+| [Command reference](docs/COMMANDS.md) | Copy the commands, understand their purpose and check expected results |
 | [Implementation walkthrough](docs/WALKTHROUGH.md) | Follow the processing path and code |
 | [Architecture](docs/ARCHITECTURE.md) | Understand service and identity boundaries |
 | [Terraform](infra/README.md) | Read the resource map, input examples and integration steps |
