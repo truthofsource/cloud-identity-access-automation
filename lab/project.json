@@ -16,5 +16,5 @@
     "RSA fixture tokens exercise signature checks. Use an established identity library and provider discovery/JWKS in a hosted application.",
     "AWS trust examples are design extensions; this repository does not claim a commissioned AWS deployment."
   ],
-  "boundary": "Sanitized patterns from an operational platform; this screen shows local code with fictional records."
+  "boundary": "Engineering patterns from an operational platform; this screen shows local code with fictional records."
 }

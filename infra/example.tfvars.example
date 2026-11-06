@@ -1,0 +1,14 @@
+subscription_id = "<your-subscription-id>"
+tenant_id = "<your-tenant-id>"
+resource_group_name = "rg-example-identity"
+environment = "lab"
+owner_object_id = "<approved-group-owner-object-id>"
+api_service_principal_object_id = "<existing-api-service-principal-object-id>"
+admin_app_role_id = "<existing-api-admin-role-id>"
+supervisor_app_role_id = "<existing-api-supervisor-role-id>"
+employee_app_role_id = "<existing-api-employee-role-id>"
+hr_app_role_id = "<existing-api-hr-role-id>"
+payroll_app_role_id = "<existing-api-payroll-role-id>"
+sensitive_records_app_role_id = "<existing-api-sensitive-records-role-id>"
+# No trust or Graph write permission is enabled by this example.
+enable_github_federation = false
