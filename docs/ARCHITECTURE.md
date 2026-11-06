@@ -1,12 +1,14 @@
 # Architecture and implementation boundaries
 
+**Terms used here:** A managed identity lets an Azure service request access without storing a password in the application. OIDC lets trusted systems exchange proof of identity; the release pipeline uses it to request short-lived Azure access.
+
 ## Source-platform context
 
 A healthcare-services workforce platform needed one sign-in layer and a reliable way to grant, change and revoke staff access without giving the business API broad directory-write permissions.
 
 - Configured Microsoft Entra as the authentication layer for a Node.js operational platform, with app registrations, audience/tenant validation and application roles.
 - Separated a dedicated non-HTTP directory worker from the business API so directory-writing permissions did not belong to the public business service.
-- Implemented bounded joiner/mover/leaver operations with exact-person binding, stored outcomes and readback. Password-reset automation remained disabled rather than being represented as accepted.
+- Implemented bounded joiner/mover/leaver operations with exact-person binding, saved results and readback. Password-reset automation remained disabled rather than being represented as accepted.
 - Used managed identities and GitHub OIDC for service/deployment access, reducing reliance on stored cloud credentials.
 
 ## Processing path

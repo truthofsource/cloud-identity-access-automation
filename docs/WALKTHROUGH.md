@@ -16,7 +16,7 @@ The demo rejects a wrong audience, expired token and cross-person read. Moving r
 
 ## 4. Review the cloud adapter boundary
 
-The demo issuer is ephemeral and local. Real Graph reconciliation must handle timeouts with unknown outcomes by reading state before retrying; a local transaction cannot roll back an external directory change.
+The demo issuer is temporary and local. Real Graph reconciliation must handle timeouts with unknown outcomes by reading state before retrying; a local transaction cannot roll back an external directory change.
 
 ## Read the implementation
 

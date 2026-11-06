@@ -1,5 +1,7 @@
 # Identity Boundaries from the Operational Platform
 
+**Terms used here:** An artifact is a file produced for a release, such as an application ZIP or container image. Provenance means the record of where a release came from and how it was produced.
+
 Microsoft Entra is the sign-in layer for the React/Node.js operational application. The bearer-token adapter verifies issuer/audience/tenant and delegated scope before server-side business authorization. Pure application-only route logic separately rejects delegated tokens and requires an exact application role.
 
 The business API has a different identity and responsibility from the non-HTTP directory worker. Actual worker code checks both its execution role and the dedicated Function host name before allowing directory writes. Provisioning requires the exact saved Microsoft object ID, not account selection by an email-name resemblance. A host-name check is an additional boundary, not a replacement for managed identity and Graph/RBAC permissions.

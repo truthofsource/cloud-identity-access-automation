@@ -1,6 +1,6 @@
 # Cloud Identity & Access Automation
 
-**Separate sign-in, application access and employee lifecycle changes.**
+**Give people the access they need, and remove it reliably when their role changes.**
 
 [The problem](#the-business-problem) · [The solution](#the-solution) · [What was built](#what-was-built) · [Proof it works](#proof-it-works) · [Run it](#run-it-locally)
 
@@ -8,26 +8,22 @@
 
 ## The Business Problem
 
-A healthcare-services workforce platform needed one sign-in layer and a reliable way to grant, change and revoke staff access without giving the business API broad directory-write permissions.
-
-1. **Too much privilege.** A business API should not need the directory permissions used to provision employees.
-2. **Access that outlives a role.** An employee can change roles or leave while a previously issued token is still valid.
-3. **Unclear outcomes.** A repeated or timed-out lifecycle request needs a stored outcome, not another blind attempt.
+Employees join, change jobs and leave. Signing in does not automatically mean a person should see every record or change directory accounts. Repeated or interrupted access changes also need clear results so staff do not repeat an action blindly.
 
 ## The Solution
 
-Separate sign-in, application authorization and directory changes. The operational platform uses Entra for sign-in, server-side role/record checks and a dedicated directory worker. This repository makes those decisions inspectable through Terraform and a local lifecycle/token reference.
+Use Microsoft Entra for sign-in, check permissions on the server, and handle account changes in a separate background service. Match each action to the correct person and record its result. Use cloud-issued service identities where appropriate to reduce stored credentials.
 
-**Business goal:** Make employee access repeatable and auditable while keeping lifecycle automation separate from business records and sensitive documents.
+**Business outcome:** Make employee access changes repeatable and reviewable while keeping account administration separate from business records and sensitive documents.
 
 ### Platform implementation
 
 - Configured Microsoft Entra as the authentication layer for a Node.js operational platform, with app registrations, audience/tenant validation and application roles.
 - Separated a dedicated non-HTTP directory worker from the business API so directory-writing permissions did not belong to the public business service.
-- Implemented bounded joiner/mover/leaver operations with exact-person binding, stored outcomes and readback. Password-reset automation remained disabled rather than being represented as accepted.
+- Implemented bounded joiner/mover/leaver operations with exact-person binding, saved results and readback. Password-reset automation remained disabled rather than being represented as accepted.
 - Used managed identities and GitHub OIDC for service/deployment access, reducing reliance on stored cloud credentials.
 
-This case study draws on a workforce/operations platform I designed and implemented. Organization details and records are excluded. The public code makes selected patterns reproducible; the screenshots show a working local demonstration with fictional data. [Validation scope](docs/VALIDATION.md) separates that evidence from provider-side acceptance.
+This case study draws on a workforce/operations platform I designed and implemented. Organization details and records are excluded. The public code makes selected patterns reproducible; the screenshots show a working local demonstration with fictional data. [Validation scope](docs/VALIDATION.md) separates that evidence from testing against the actual cloud service.
 
 ### Actual implementation code
 
@@ -69,7 +65,7 @@ npm run test:source
 The selected original tests run offline. [Validation](docs/VALIDATION.md) records current counts and distinguishes them from historical hosted evidence.
 
 
-**Current local checks:** 7 extracted-source tests + 16 portable tests passed · 6 demonstration checks · 2 Terraform mock tests.
+**Current local checks:** 7 extracted-source tests + 16 portable tests passed · 6 demonstration checks · 2 Terraform tests using simulated cloud responses.
 
 These are dated results for this reference implementation, not live Azure/AWS deployment claims. [Test record](docs/validation-results.json) · [Evidence and limitations](docs/VALIDATION.md)
 
@@ -120,7 +116,7 @@ Expected access denials are successful negative tests. Cloud permissions, networ
 ## Security Practices
 
 - The business API and privileged worker have different identities. The example does not grant Microsoft Graph write permissions.
-- Tokens are checked before record-level authorization; a valid signature alone does not authorize another employee's record.
+- Tokens are checked before permission checks for the specific record; a valid signature alone does not authorize another employee's record.
 - OIDC trust and tenant/subscription inputs are explicit. No client secret, real directory ID, token or production state is included.
 
 State, saved Terraform plans, private inputs and credentials are excluded through [`.gitignore`](.gitignore). The existing validation workflow is manual-only and has no cloud deployment permission.
