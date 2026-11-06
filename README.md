@@ -2,24 +2,32 @@
 
 **Separate sign-in, application access and employee lifecycle changes.**
 
-![Overview of the working local demonstration](docs/images/01-overview.png)
+[The problem](#the-business-problem) · [The solution](#the-solution) · [What was built](#what-was-built) · [Proof it works](#proof-it-works) · [Run it](#run-it-locally)
 
-## Business scenario
+![Overview of the working demonstration](docs/images/01-overview.png)
+
+## The Business Problem
 
 A healthcare-services workforce platform needed one sign-in layer and a reliable way to grant, change and revoke staff access without giving the business API broad directory-write permissions.
 
+1. **Too much privilege.** A business API should not need the directory permissions used to provision employees.
+2. **Access that outlives a role.** An employee can change roles or leave while a previously issued token is still valid.
+3. **Unclear outcomes.** A repeated or timed-out lifecycle request needs a stored outcome, not another blind attempt.
+
+## The Solution
+
+Separate sign-in, application authorization and directory changes. The operational platform uses Entra for sign-in, server-side role/record checks and a dedicated directory worker. This repository makes those decisions inspectable through Terraform and a local lifecycle/token reference.
+
 **Business goal:** Make employee access repeatable and auditable while keeping lifecycle automation separate from business records and sensitive documents.
 
-## Engineering context
-
-This project distills work I designed and implemented for an Azure-based workforce and operations platform. The organization, people, cloud resource names and records have been anonymized. The public code extracts selected decisions into a runnable reference; it is not a copy of the private production system.
+### Platform implementation
 
 - Configured Microsoft Entra as the authentication layer for a Node.js operational platform, with app registrations, audience/tenant validation and application roles.
 - Separated a dedicated non-HTTP directory worker from the business API so directory-writing permissions did not belong to the public business service.
 - Implemented bounded joiner/mover/leaver operations with exact-person binding, stored outcomes and readback. Password-reset automation remained disabled rather than being represented as accepted.
 - Used managed identities and GitHub OIDC for service/deployment access, reducing reliance on stored cloud credentials.
 
-The screenshots are captured from this repository's working **local demonstration with fictional data**. They are not cloud-portal screenshots or claims that a visitor has provisioned these resources. [Evidence and scope](docs/VALIDATION.md) distinguishes implemented platform patterns, local tests and cloud work not commissioned here.
+This case study draws on a workforce/operations platform I designed and implemented. Organization details and records are excluded. The public code makes selected patterns reproducible; the screenshots show a working local demonstration with fictional data. [Validation scope](docs/VALIDATION.md) separates that evidence from provider-side acceptance.
 
 ## Architecture
 
@@ -34,15 +42,54 @@ flowchart LR
   Worker --> Audit[(Operation receipts)]
 ```
 
-## Terraform infrastructure
+## What Was Built
 
-Entra security groups and API app-role assignments, separate API/directory/deployment managed identities, and an optional exact-subject GitHub federated credential.
+| Component | Role in plain words | Implementation |
+| --- | --- | --- |
+| Entra groups and app roles | Map six staff access groups to an existing API, with an explicit group owner. | [View code](infra/groups.tf) |
+| Separate managed identities | Keep API, directory-worker and deployment identities distinct. | [View code](infra/main.tf) |
+| Optional GitHub OIDC trust | Accept one reviewed workload subject; federation remains Off by default. | [View code](infra/main.tf) |
+| Signed-token reference | Check RSA signature, issuer, audience, tenant and token lifetime using local fixture keys. | [View code](lab/domain.py) |
+| Lifecycle journal | Make duplicate joiner requests idempotent and apply current-state access checks. | [View code](lab/domain.py) |
+| Positive and negative tests | Exercise ownership, role removal, leaver access and duplicate worker requests. | [View code](tests) |
 
-See the [Terraform code and validation steps](infra/README.md), [input example](infra/example.tfvars.example) and [mock plan tests](infra/tests). Cloud commissioning and any paid resources remain separate from the local demonstration.
+## Proof It Works
 
-## Run it
+**Recorded checks:** 16 unit tests passed · 6 demonstration checks passed · 2 Terraform mock tests passed.
 
-Requires Python 3.12 or newer. The identity example also installs its pinned cryptography dependency. Run inside a virtual environment:
+These are dated results for this reference implementation, not live Azure/AWS deployment claims. [Test record](docs/validation-results.json) · [Evidence and limitations](docs/VALIDATION.md)
+
+### 1. Duplicate requests do not create duplicate work
+
+Separate worker connections submit the same request key. The tests observe one stored operation and revision.
+
+### 2. Wrong access is rejected
+
+Wrong-audience, expired-token, incorrect-signature and cross-person requests are rejected by the reference.
+
+### 3. Old tokens cannot bypass a leaver change
+
+The local authorization adapter reads current account state. A previously valid token no longer grants access after the employee is inactive.
+
+### 4. Visible results
+
+The dashboard runs the same domain code as the CLI. Desktop/mobile rendering, all three tabs, rerunning the demonstration, cross-origin write rejection and unlisted-file rejection were checked. The screenshots are captured from those runs.
+
+![Positive and negative checks from the running demonstration](docs/images/02-validation.png)
+
+Expected access denials are successful negative tests. Cloud permissions, network connectivity and provider integrations need their own acceptance evidence.
+
+## Security Practices
+
+- The business API and privileged worker have different identities. The example does not grant Microsoft Graph write permissions.
+- Tokens are checked before record-level authorization; a valid signature alone does not authorize another employee's record.
+- OIDC trust and tenant/subscription inputs are explicit. No client secret, real directory ID, token or production state is included.
+
+State, saved Terraform plans, private inputs and credentials are excluded through [`.gitignore`](.gitignore). The existing validation workflow is manual-only and has no cloud deployment permission.
+
+## Run It Locally
+
+Requires Python 3.12 or newer and the pinned cryptography dependency. Run inside a virtual environment:
 
 ```bash
 python -m venv .venv
@@ -55,23 +102,52 @@ python -B -m lab serve --port 8011
 
 On Windows, use `.venv\Scripts\Activate.ps1` instead of the `source` command, or run `.venv\Scripts\python.exe` directly. Open [the local workbench](http://127.0.0.1:8011), choose **Run demonstration**, then review **Validation** and **Evidence**. Stop with Ctrl+C. No cloud login, employee data or paid API request is required.
 
-## Validation and failure handling
+## Terraform Infrastructure
 
-![Positive and negative checks from the local execution](docs/images/02-validation.png)
+Entra security groups and API app-role assignments, separate API/directory/deployment managed identities, and an optional exact-subject GitHub federated credential.
 
-Expected security denials count as successful negative tests. The implementation walkthrough explains what each check demonstrates and where the hosted-system boundary begins.
+See the [Terraform code and validation steps](infra/README.md), [input example](infra/example.tfvars.example) and [mock plan tests](infra/tests). Cloud commissioning and any paid resources remain separate from the local demonstration.
 
-| Read next | Purpose |
+Validate the infrastructure source without creating cloud resources:
+
+```bash
+cd infra
+terraform init -backend=false
+terraform fmt -check -recursive
+terraform validate
+terraform test
+```
+
+The tests use mock providers. Example inputs are placeholders, not deployment-ready values. Review the [integration boundaries and cost notes](infra/README.md) before any separate cloud commissioning.
+
+## Scaling and Tradeoffs
+
+Serialize lifecycle work per person, use a shared durable journal and monitor unknown provider outcomes. A real directory timeout requires readback before retrying; a local SQLite transaction cannot undo a remote Graph operation.
+
+See [strengths, weaknesses and tradeoffs](docs/SCALING.md) for the detailed decisions.
+
+## Skills Demonstrated
+
+- Microsoft Entra ID and application authorization
+- Joiner/mover/leaver automation
+- Managed identities and exact-subject OIDC federation
+- Least privilege and ownership checks
+- Idempotency and concurrent worker testing
+
+## Project Guides
+
+| Guide | What you will find |
 | --- | --- |
-| [Implementation walkthrough](docs/WALKTHROUGH.md) | Follow the code, business decision and failure case |
-| [Architecture](docs/ARCHITECTURE.md) | Understand trust boundaries and cloud integration |
-| [Validation evidence](docs/VALIDATION.md) | See actual local results and untested boundaries |
-| [Security and privacy](SECURITY.md) | Review permissions, secrets and publication controls |
-| [Operations and troubleshooting](docs/OPERATIONS.md) | Diagnose failures and clean up safely |
-| [Scaling and tradeoffs](docs/SCALING.md) | Decide when to change the design |
-| [Sources and presentation credits](docs/REFERENCES.md) | Technical references and README inspiration |
+| [Implementation walkthrough](docs/WALKTHROUGH.md) | Follow the processing path and code |
+| [Architecture](docs/ARCHITECTURE.md) | Understand service and identity boundaries |
+| [Terraform](infra/README.md) | Read the resource map, input examples and integration steps |
+| [Validation evidence](docs/VALIDATION.md) | Inspect dated checks and their limits |
+| [Operations and troubleshooting](docs/OPERATIONS.md) | Diagnose failures and recover safely |
+| [Security and privacy](SECURITY.md) | Review access, secrets and publication controls |
+| [Scaling and tradeoffs](docs/SCALING.md) | Understand the costs of each design choice |
+| [References](docs/REFERENCES.md) | See technical sources and presentation inspiration |
 
-## Repository map
+## Repository Map
 
 ```text
 infra/               Terraform source, example inputs and mock plan tests
@@ -81,6 +157,6 @@ docs/                Architecture, walkthrough, evidence and operating guide
 .github/workflows/   Manual-only contract validation; no cloud deployment
 ```
 
-## Cost and cleanup
+## Cost and Cleanup
 
 The default local demo creates only temporary local state and makes no paid calls. Cloud examples are separate opt-in source and can create billable resources if an operator applies them. No automated deployment or destruction is configured. Use `git status --short --ignored` before cleanup; remove only your own `.venv` or disposable lab output. Never copy real state files, tokens or employee documents into this repository.
