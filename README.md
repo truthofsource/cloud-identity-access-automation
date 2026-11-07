@@ -29,15 +29,29 @@ This case study draws on a workforce/operations platform I designed and implemen
 
 This repository now includes selected implementation source and original tests from the operational platform, rather than only a portable reference. Read [what was implemented and accepted](docs/IMPLEMENTATION.md), [the source map](docs/SOURCE-MAP.md) and the dated validation boundaries. Identifying configuration is replaced with examples; original private history and records are excluded.
 
+## Tools Used and What They Do
+
+| Tool or service | What it does | Where it fits |
+| --- | --- | --- |
+| Microsoft Entra ID | Provide staff identity, application roles and workload identities. | Actual identity layer; a job title is not an access role. |
+| Microsoft Graph | Carry out the directory changes owned by the dedicated worker. | Actual integration boundary; the public demo does not change accounts. |
+| MSAL | Support the frontend’s Microsoft sign-in/token acquisition. | Application context; not the server’s token-verification library. |
+| jose | Verify access-token cryptography in the selected server adapter. | Reference adapter; default tests do not contact Entra or its key endpoints. |
+| Node.js and TypeScript | Run the worker/API rules and selected source tests. | Actual implementation excerpts. |
+| Terraform | Describe identity and scoped infrastructure boundaries. | Reference configuration and local checks; no directory grants are applied. |
+| Python, SQLite and cryptography | Run the local identity/recovery illustration and its test data. | Public reference tools; SQLite is not the hosted workforce database. |
+
+Managed identities authenticate workloads to approved services; they do not automatically provide Graph permissions, SQL grants or a network path.
+
 ## Step by Step
 
 A short walkthrough of the process, with technical instructions and evidence limits in the sections below.
 
-1. **Verify the signed-in person** — Microsoft Entra handles sign-in while the server checks the received identity and permissions. The application links actions to the correct employee account.
+1. **Verify the signed-in person (Entra and jose)** — Microsoft Entra handles sign-in while the server checks the received identity and permissions. The application links actions to the correct employee account.
 
 2. **Request the account change** — An authorized action asks for a joiner, role change or leaver operation. The server checks the current record before accepting it.
 
-3. **Use the separate identity worker** — A dedicated background service performs the permitted account operation. Its directory permissions stay separate from the public business server.
+3. **Use the separate identity worker (Microsoft Graph)** — A dedicated background service performs the permitted account operation. Its directory permissions stay separate from the public business server.
 
 4. **Confirm and record the outcome** — The process reads back the relevant result and saves its operating record. Duplicate requests and changed eligibility must not silently repeat an account change.
 
