@@ -182,6 +182,10 @@ See [strengths, weaknesses and tradeoffs](docs/SCALING.md) for the detailed deci
 - Least privilege and ownership checks
 - Idempotency and concurrent worker testing
 
+## Troubleshooting Lessons
+
+Successful sign-in did not prove the application could execute its SQL statement. Runtime-identity testing exposed a narrow permission gap without requiring a broader role. [Read the incident, evidence and verification](docs/LESSONS-LEARNED.md).
+
 ## Project Guides
 
 | Guide | What you will find |
