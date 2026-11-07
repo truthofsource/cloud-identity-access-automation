@@ -2,7 +2,7 @@
 
 **Give people the access they need, and remove it reliably when their role changes.**
 
-[The problem](#the-business-problem) · [The solution](#the-solution) · [What was built](#what-was-built) · [Proof it works](#proof-it-works) · [Run it](#run-it-locally)
+[The problem](#the-business-problem) · [The solution](#the-solution) · [What was built](#what-was-built) · [Proof it works](#proof-it-works) · [Run it](#run-it-locally) · [Step by step](#step-by-step)
 
 ![Overview of the working demonstration](docs/images/01-overview.png)
 
@@ -28,6 +28,18 @@ This case study draws on a workforce/operations platform I designed and implemen
 ### Actual implementation code
 
 This repository now includes selected implementation source and original tests from the operational platform, rather than only a portable reference. Read [what was implemented and accepted](docs/IMPLEMENTATION.md), [the source map](docs/SOURCE-MAP.md) and the dated validation boundaries. Identifying configuration is replaced with examples; original private history and records are excluded.
+
+## Step by Step
+
+A short walkthrough of the process, with technical instructions and evidence limits in the sections below.
+
+1. **Verify the signed-in person** — Microsoft Entra handles sign-in while the server checks the received identity and permissions. The application links actions to the correct employee account.
+
+2. **Request the account change** — An authorized action asks for a joiner, role change or leaver operation. The server checks the current record before accepting it.
+
+3. **Use the separate identity worker** — A dedicated background service performs the permitted account operation. Its directory permissions stay separate from the public business server.
+
+4. **Confirm and record the outcome** — The process reads back the relevant result and saves its operating record. Duplicate requests and changed eligibility must not silently repeat an account change.
 
 ## Architecture
 
