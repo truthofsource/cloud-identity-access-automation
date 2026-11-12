@@ -8,7 +8,11 @@
 
 ## The Business Problem
 
-Employees join, change jobs and leave. Signing in does not automatically mean a person should see every record or change directory accounts. Repeated or interrupted access changes also need clear results so staff do not repeat an action blindly.
+HR's employee records and the organization's Microsoft accounts describe related parts of the same person's working life. A new employee needs an account and appropriate access; a job change can alter responsibilities; a departure requires access to be reviewed and removed. Handling these as disconnected tasks creates room for delayed setup or retained access.
+
+A successful Microsoft sign-in also leaves business questions unanswered: which employee record belongs to this person, which team may they review and which documents may they open? An interrupted account update can leave the operator unsure whether to repeat it. Giving the public business API broad directory-writing powers would increase the consequences of a mistake.
+
+The business need was a traceable employee-access process that keeps account administration separate from everyday application requests and makes repeated or uncertain changes safe to investigate.
 
 ## The Solution
 
