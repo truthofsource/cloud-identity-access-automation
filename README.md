@@ -143,6 +143,12 @@ The dashboard runs the same domain code as the CLI. Desktop/mobile rendering, al
 
 Expected access denials are successful negative tests. Cloud permissions, network connectivity and provider integrations need their own acceptance evidence.
 
+## Identity Logs in the Security Workspace
+
+Native Entra audit and interactive sign-in logs already reach the hub security workspace. The November 14 seven-day sample contained 34 audit rows and 20 interactive sign-in rows; these are records, not unique people or complete authentication coverage.
+
+Other inspected sign-in categories were not enabled and had no rows. Verifying arrivals did not activate new identity detectors or change account permissions. [Identity collection and its limits](docs/IDENTITY-OBSERVABILITY.md) distinguishes sign-in evidence, Azure resource-role changes and the separate application security path.
+
 ## Security Practices
 
 - The business API and privileged worker have different identities. The example does not grant Microsoft Graph write permissions.
