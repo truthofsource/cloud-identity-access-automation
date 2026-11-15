@@ -4,7 +4,7 @@ These are historical engineering incidents summarized from maintained internal r
 
 ## Related incident
 
-[Testing with the runtime SQL identity](https://github.com/truthofsource/api-business-logic-and-workflow-controls/blob/main/docs/LESSONS-LEARNED.md) explains the shared failure and verification. Its historical acceptance is not another hosted test performed for this repository.
+[Testing with the runtime SQL identity](https://github.com/truthofsource/azure-api-routes/blob/main/examples/business-rules/docs/LESSONS-LEARNED.md) explains the shared failure and verification. Its historical acceptance is not another hosted test performed for this repository.
 
 ## An AccountKey metric did not identify a key-using application
 
