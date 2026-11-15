@@ -1,109 +1,169 @@
-# Build your own: Cloud Identity & Access Automation
+# Build your own from scratch: Cloud Identity Access Automation
 
-This is a step-by-step build guide for an independent learning copy. Follow the numbered steps in order and record your own results. The included local implementation is not a complete deployment of the private business platform; cloud extensions are separate and must use your own authorized resources.
+Your own Entra joiner/leaver lab using two fictional accounts, a reviewed CSV and exact account-ID cleanup.
 
-## What you will create
+Start with a new folder, your own files and your own accounts. The numbered steps below describe the build; no portfolio repository checkout is required. The existing implementation/evidence elsewhere in this repository is a separate reference, not a claim that your new build has already passed.
 
-A local identity decision and audit model, not an Entra directory mutation.
+## Prerequisites
 
-## Prerequisites and working locations
+A separate test Entra tenant/domain you administer, Microsoft Graph PowerShell and permission for the selected user lifecycle operations. Do not use real employees or a production-wide identity feed.
 
-| Location | What you need |
-| --- | --- |
-| Your workstation | Git and the runtime versions documented in [the command guide](COMMANDS.md); use its package/lockfile instructions. |
-| Bash, Linux or WSL terminal | The commands below use Bash syntax. Prepare Python 3.12 and the compatible Node.js version documented by the project; use the project's pinned dependency files. |
-| PowerShell alternative | Use the PowerShell forms in the command guide, or run this Bash recipe in WSL; do not paste Bash loops into PowerShell. |
-| Azure or external service | Not needed for default local tests. Any cloud extension requires your own account, target, permissions, budget and acceptance plan. |
+Use Bash on Linux/macOS/WSL for Bash blocks and PowerShell for PowerShell blocks. Select the tool versions supported by the official sources below, record the versions you actually install and retain generated dependency locks. Cloud resources, scanner downloads, logs and external AI calls can create costs; review the stated scope before enabling them.
 
-Read [the existing validation scope](VALIDATION.md) before running anything. A recorded historical test result is not evidence that your new copy has passed.
+## Create your project folder
 
-## Step 1: Create your own workspace
-
-**Where:** your workstation, in a new project folder.
-
-1. Clone the public source below into a new directory; keep the source attribution and included license terms. This creates your local learning copy, not cloud resources.
-2. Record the selected commit and tool versions before editing. If you later publish a fork, review any origin, hash or target bindings rather than disabling guards to make the fork pass.
+Choose a new folder name. These first commands create a blank project; an optional `git init` gives it its own history. Create parent directories in your editor when a later step introduces a nested file.
 
 ```bash
-git clone https://github.com/truthofsource/cloud-identity-access-automation.git
-cd cloud-identity-access-automation
-git rev-parse HEAD
-git rev-parse --show-toplevel
-git status --short
+mkdir my-cloud-identity-access-automation
+cd my-cloud-identity-access-automation
+git init
 ```
 
-**Expected result:** the project files are present and you can identify the starting source. Continue from this repository root unless a command explicitly changes directory.
+Create `.gitignore` before saving credentials or build outputs:
 
-## Step 2: Prepare dependencies and build the local baseline
-
-**Where:** the same workstation terminal.
-
-1. Follow the runtime instructions and install only the dependencies selected by this project's files. Terraform provider downloads, optional browser downloads and scanner databases are separate prerequisites where the detailed guide identifies them.
-2. Run these source-derived baseline commands one at a time and stop on an unexpected failure. Read any skipped integration cases; a skip is not a successful live check.
-
-```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-npm run test:source
-.venv/bin/python -B -m unittest discover -s tests -v
-.venv/bin/python -B -m lab demo
+```gitignore
+.venv/
+node_modules/
+.env
+.env.*
+local.settings.json
+credentials.json
+token.json
+*.pem
+*.key
+*.tfstate*
+*.tfplan
+.terraform/
+private*/
+captures/
+backups/
+batch.json
+reports/
+out/
+app-config.local.yaml
 ```
 
-**Expected result:** the selected tests finish without unexpected failures, and a demonstration command, where provided, produces fictional local decisions. These commands reproduce the included lab scope; they do not commission the live platform.
+The source/file snippets are a starting implementation you type or paste into the named files. Replace `YOUR_*`, names, regions and addresses only with values from your own lab; do not place real client/employee records in a test project. Keep your terminal in this project root unless a step explicitly changes directory.
 
-## Step 3: Make one project-specific change
+Before a first commit, set your own repository-local author with `git config user.name "YOUR_NAME"` and `git config user.email "YOUR_PUBLIC_COMMIT_EMAIL"`. Review `git status --short` and the staged diff before publishing; ignored local files are not a substitute for reviewing what you upload.
 
-**Where:** your editor, in your own local copy.
+## Step 1 — Define the lifecycle input
 
-1. Start with [`lab/domain.py`](../lab/domain.py) and the matching test or configuration instructions. Add a fictional duplicate or leaver case and keep it from producing a second account change.
-2. Save your new case separately from the original acceptance records, then rerun the affected tests and the baseline. Do not edit recorded scanner results, screenshots or validation counts to manufacture a successful outcome.
+**Where:** Your new project folder.
 
-**Expected result:** you can explain what you changed, why the result changed and which negative case still fails safely. An unexpected failure means investigate the implementation or setup, not remove the failing check.
+Choose your test tenant's verified domain and create users.csv below with unique fictional names. Define creation, disabling and deletion as distinct steps; a job title must not silently grant an administrator role.
 
-## Step 4: Verify behavior and capture your own evidence
+Create **`users.csv`** with the following contents:
 
-**Where:** the test output, local viewer where supplied, and your private evidence folder.
-
-1. If the project supplies a viewer, use its startup command in [the command guide](COMMANDS.md); keep long-running preview servers in a separate terminal. Follow its exact loopback address and stop it with Ctrl+C when finished; for a command-line-only example, inspect its terminal output and generated files instead.
-2. Compare your own output with [the proof and limits](../README.md#proof-it-works), then record source version, command, expected result, observed result and unresolved work. Capture screenshots of your own fictional output rather than presenting the existing screenshots as your execution.
-
-**Expected result:** A local identity decision and audit model, not an Entra directory mutation. Your evidence must say whether it covers local logic, a real tool run, a hosted service or a human observation.
-
-### Start the local preview
-
-Open a second terminal in the same repository root printed by `git rev-parse --show-toplevel`. Run the command below from that root, after the baseline has passed; it stays running while you use the preview.
-
-```bash
-.venv/bin/python -B -m lab serve --port 8011
+```csv
+UserPrincipalName,DisplayName,MailNickname
+lab.joiner01@YOUR_VERIFIED_DOMAIN,Lab Joiner One,lab.joiner01
+lab.joiner02@YOUR_VERIFIED_DOMAIN,Lab Joiner Two,lab.joiner02
 ```
 
-Open [http://127.0.0.1:8011](http://127.0.0.1:8011). Use the exact hostname shown here; a localhost address and a 127.0.0.1 address are not interchangeable for every project's host checks.
+**Check before continuing:** The CSV identifies only the two accounts you intend to create.
 
-The command uses the same Python environment as the baseline where Python is required. This guide uses an explicit virtual-environment executable rather than activating it; when following other project examples that say `python`, use that same executable if the project has a `.venv`. In WSL, keep the clone and its virtual environment in the same Linux environment; do not reuse a Windows `.venv`.
+## Step 2 — Inspect the input before connecting
 
-Keep one preview per listening port. Stop your own earlier preview with Ctrl+C before starting another one on that port, or use only a port override documented by the project. If you stop the preview, rerun only its startup command; you do not need to rebuild or redeploy cloud services.
+**Where:** PowerShell in your folder.
 
-## Step 5: Plan an independent cloud extension, if needed
+Import the CSV and reject missing/duplicate user principal names. Review the two rows manually and replace the placeholder domain before making any directory request.
 
-**Where:** your own architecture/configuration files first; a separately authorized lab subscription only later.
+```powershell
+$rows = Import-Csv -LiteralPath ./users.csv
+if ($rows.Count -ne 2) { throw 'Expected exactly two lab rows' }
+if ($rows | Where-Object { -not $_.UserPrincipalName -or -not $_.DisplayName }) { throw 'Missing field' }
+if ($rows | Group-Object UserPrincipalName | Where-Object Count -gt 1) { throw 'Duplicate user' }
+if ($rows.UserPrincipalName -match 'YOUR_VERIFIED_DOMAIN') { throw 'Replace the lab domain' }
+$domain = Read-Host 'Your verified isolated test-tenant domain'
+$allowed = @("lab.joiner01@$domain", "lab.joiner02@$domain")
+if ($domain -notmatch '^[a-zA-Z0-9.-]+$') { throw 'Invalid domain syntax' }
+if ($rows | Where-Object { $_.UserPrincipalName -notin $allowed }) { throw 'Unexpected account outside the two-user lab' }
+$rows | Select-Object UserPrincipalName, DisplayName
+```
 
-1. Read the implementation and infrastructure references linked below. Substitute your own names, identities, address ranges and service settings in an isolated environment; a public reference may contain only selected components and is not authority to apply someone else's production state.
-2. List the missing integrations and acceptance checks before deployment: runtime hosting, permissions, network/DNS paths, secrets, source data, notification or provider access as applicable. Keep disabled examples disabled until their specific dependencies, costs and cleanup are understood.
+**Check before continuing:** The proposed lifecycle scope is exactly your two fictional users.
 
-**Expected result:** a scoped extension plan with owners and explicit acceptance criteria, not a claim that the full service is deployed. No cloud `apply`, scanner targeting, paid operation or provider sign-in is implied by the local recipe.
+## Step 3 — Connect with the required test authority
 
-- [Architecture](ARCHITECTURE.md)
-- [Implementation](IMPLEMENTATION.md)
-- [Operations](OPERATIONS.md)
-- [Validation](VALIDATION.md)
-- [Source Map](SOURCE-MAP.md)
-- [Lessons Learned](LESSONS-LEARNED.md)
+**Where:** Your PowerShell session and Entra consent.
 
-## Step 6: Troubleshoot, close out and explain what you built
+Install/import Microsoft.Graph.Users and connect to the exact test tenant with User.ReadWrite.All delegated scope under an appropriately authorized test administrator. Verify Get-MgContext before changing anything; Graph consent and the signed-in administrator's role both matter.
 
-**Where:** your project folder and the operating guide for any environment you actually created.
+```powershell
+Install-Module Microsoft.Graph.Users -Scope CurrentUser
+Connect-MgGraph -TenantId 'YOUR_TEST_TENANT_ID' -Scopes 'User.ReadWrite.All'
+Get-MgContext
+```
 
-1. Check the failing stage in order: working directory and runtime, dependencies, test input, configuration, then any separately enabled service. Preserve the error and consult the existing troubleshooting lessons before widening permissions or changing the target.
-2. Stop only the viewers/containers you started, retain your useful evidence and remove only resources belonging to your own reviewed lab. A local-only run needs no cloud deletion; if you created cloud resources, verify residual storage/address/monitoring charges rather than assuming compute stop removes all cost.
+**Check before continuing:** The context shows your intended tenant and permission scope.
 
-**Finish checklist:** explain the business problem, show your own change and verification, describe one failure/recovery case, identify limitations and name the next owner action. Keep credentials and business records out of public commits and screenshots.
+## Step 4 — Create one controlled test account at a time
+
+**Where:** The same PowerShell session.
+
+Check that the exact UPN does not already exist, prompt privately for a temporary lab password and create the account. Repeat deliberately for the second row and retain the returned IDs privately; never print/store a password in the CSV or commit history.
+
+```powershell
+$row = $rows[0]
+$existing = Get-MgUser -Filter "userPrincipalName eq '$($row.UserPrincipalName)'"
+if ($existing) { throw 'Account already exists; reconcile rather than duplicate' }
+$secure = Read-Host 'Temporary password for this fictional user' -AsSecureString
+$password = [System.Net.NetworkCredential]::new('', $secure).Password
+$created = New-MgUser -AccountEnabled:$true -DisplayName $row.DisplayName `
+  -UserPrincipalName $row.UserPrincipalName -MailNickname $row.MailNickname `
+  -PasswordProfile @{Password=$password;ForceChangePasswordNextSignIn=$true}
+$password = $null
+$created | Select-Object Id, UserPrincipalName
+```
+
+**Check before continuing:** Each returned ID corresponds to one reviewed fictional row.
+
+## Step 5 — Exercise the leaver boundary
+
+**Where:** Your recorded exact test account ID.
+
+Disable only the selected lab account and read it back. Test membership/session/app access separately if you add those features; AccountEnabled=false is not proof that every previously issued token or downstream account is immediately gone.
+
+```powershell
+Update-MgUser -UserId 'YOUR_CREATED_LAB_USER_ID' -AccountEnabled:$false
+Get-MgUser -UserId 'YOUR_CREATED_LAB_USER_ID' -Property Id,UserPrincipalName,AccountEnabled
+```
+
+**Check before continuing:** The selected user is disabled and unrelated accounts are unchanged.
+
+## Step 6 — Capture evidence and remove only your test identities
+
+**Where:** Entra audit logs and your private ID record.
+
+Inspect the actual create/disable events and save a value-free lifecycle diagram. Remove the two exact created test IDs only when finished, disconnect Graph and retain no password or token in your public project.
+
+**Check before continuing:** You can explain request → validation → authorized directory operation → readback → audit evidence.
+
+## Verification and your own screenshots
+
+| Evidence | What to record | Your result |
+| --- | --- | --- |
+| New build | Your own files/resource settings and tool versions | Not yet recorded |
+| Working path | The actual successful request, configuration or recovery result | Not yet recorded |
+| Failure boundary | A meaningful denied, malformed, stale or failed case | Not yet recorded |
+| Recovery / cleanup | What you restored or removed and what remains billed | Not yet recorded |
+
+Capture your own architecture/configuration, one working result and one failure/recovery result. Keep tokens, credentials, personal records and private identifiers out of public screenshots. Existing portfolio images are references, not evidence that you performed these steps.
+
+## Troubleshooting order
+
+1. Confirm the named file, working directory and selected tool/interpreter.
+2. Check the exact input and resource/account selected for the failing step.
+3. Separate identity permission, network/DNS reachability and application validation.
+4. Keep the actual error and reconcile an unknown write outcome before repeating it; do not widen access or repeat paid operations blindly.
+
+The numbered steps describe a build procedure. Local syntax checks, an accepted API request, a completed hosted operation and a human verification are different evidence levels; fill in the verification table with what you actually observed.
+
+## Official implementation references
+
+- [learn.microsoft.com — get-started](https://learn.microsoft.com/en-us/powershell/microsoftgraph/get-started)
+- [learn.microsoft.com — users-lifecycle-workflow-overview](https://learn.microsoft.com/en-us/entra/identity/users/users-lifecycle-workflow-overview)
+
+The walkthrough layout follows the prerequisites → creation/configuration → test → verification → troubleshooting → cleanup pattern of the [Splunk project reference](https://github.com/davidharris6/splunk-siem-log-analysis). Its Splunk-specific settings are not copied into unrelated projects.
