@@ -49,6 +49,19 @@ Managed identities authenticate workloads to approved services; they do not auto
 
 ## Step by Step
 
+Build an independent version with the [reader-operated walkthrough](docs/BUILD-YOUR-OWN.md). It gives prerequisites, working locations, numbered actions, source-derived commands, expected results, verification and cleanup.
+
+For this project, your working starting point is [`lab/domain.py`](lab/domain.py). Expected scope: A local identity decision and audit model, not an Entra directory mutation.
+
+1. **Create your own workspace.** Copy the project and record the source version before editing.
+2. **Prepare and run the baseline.** Use the documented runtimes and selected dependencies, then run the local checks.
+3. **Make your own change.** Edit a project-specific fixture, configuration or rule and rerun its positive and negative cases.
+4. **Verify and document your result.** Capture your own evidence and distinguish a local example from a live integration.
+5. **Extend and close out deliberately.** Plan any independent cloud work separately and clean up only what you created.
+
+<details>
+<summary>How the underlying platform process works</summary>
+
 A short walkthrough of the process, with technical instructions and evidence limits in the sections below.
 
 1. **Verify the signed-in person (Entra and jose)** — Microsoft Entra handles sign-in while the server checks the received identity and permissions. The application links actions to the correct employee account.
@@ -58,6 +71,8 @@ A short walkthrough of the process, with technical instructions and evidence lim
 3. **Use the separate identity worker (Microsoft Graph)** — A dedicated background service performs the permitted account operation. Its directory permissions stay separate from the public business server.
 
 4. **Confirm and record the outcome** — The process reads back the relevant result and saves its operating record. Duplicate requests and changed eligibility must not silently repeat an account change.
+
+</details>
 
 ## Architecture
 
