@@ -89,12 +89,33 @@ $rows | Select-Object UserPrincipalName, DisplayName
 
 **Where:** Your PowerShell session and Entra consent.
 
-Install/import Microsoft.Graph.Users and connect to the exact test tenant with User.ReadWrite.All delegated scope under an appropriately authorized test administrator. Verify Get-MgContext before changing anything; Graph consent and the signed-in administrator's role both matter.
+Create lab-context.ps1 below, install the Graph Users module and connect to your exact test tenant. The helper checks the tenant and delegated scope; the signed-in operator must also hold the appropriate directory role for the two fictional accounts.
+
+Create **`lab-context.ps1`** with the following contents:
+
+```powershell
+function Assert-LabContext {
+    param([Parameter(Mandatory=$true)][guid]$TenantId)
+    $context = Get-MgContext
+    if (-not $context -or $TenantId -eq [guid]::Empty -or $context.TenantId -ne $TenantId.ToString()) {
+        throw 'Stop: the Graph session is not the selected test tenant'
+    }
+    if ($context.AuthType -ne 'Delegated' -or $context.Scopes -notcontains 'User.ReadWrite.All') {
+        throw 'Stop: the required delegated test context is missing'
+    }
+}
+```
 
 ```powershell
 Install-Module Microsoft.Graph.Users -Scope CurrentUser
-Connect-MgGraph -TenantId 'YOUR_TEST_TENANT_ID' -Scopes 'User.ReadWrite.All'
-Get-MgContext
+. ./lab-context.ps1
+$expectedTenant = 'YOUR_TEST_TENANT_ID'
+if ($expectedTenant -eq 'YOUR_TEST_TENANT_ID') { throw 'Replace the test tenant ID first' }
+try { $parsedTenant = [guid]$expectedTenant } catch { throw 'Use the test tenant GUID, not a name/domain' }
+if ($parsedTenant -eq [guid]::Empty) { throw 'The test tenant must not be empty' }
+$expectedTenant = $parsedTenant.ToString()
+Connect-MgGraph -TenantId $expectedTenant -Scopes 'User.ReadWrite.All' -ContextScope Process
+Assert-LabContext -TenantId $expectedTenant
 ```
 
 **Check before continuing:** The context shows your intended tenant and permission scope.
@@ -103,18 +124,26 @@ Get-MgContext
 
 **Where:** The same PowerShell session.
 
-Check that the exact UPN does not already exist, prompt privately for a temporary lab password and create the account. Repeat deliberately for the second row and retain the returned IDs privately; never print/store a password in the CSV or commit history.
+Run the context guard immediately before creating a selected row. Retain each successful returned ID in the private CSV below; if creation succeeds but local journaling fails, reconcile that exact UPN in the same tenant and audit logs before retrying, and never adopt a pre-existing account for cleanup.
 
 ```powershell
-$row = $rows[0]
+Assert-LabContext -TenantId $expectedTenant
+$row = $rows[0] # Deliberately select the second reviewed row only when ready.
 $existing = Get-MgUser -Filter "userPrincipalName eq '$($row.UserPrincipalName)'"
-if ($existing) { throw 'Account already exists; reconcile rather than duplicate' }
+if ($existing) { throw 'Account exists; reconcile the prior outcome instead of creating/adopting it' }
 $secure = Read-Host 'Temporary password for this fictional user' -AsSecureString
 $password = [System.Net.NetworkCredential]::new('', $secure).Password
-$created = New-MgUser -AccountEnabled:$true -DisplayName $row.DisplayName `
-  -UserPrincipalName $row.UserPrincipalName -MailNickname $row.MailNickname `
-  -PasswordProfile @{Password=$password;ForceChangePasswordNextSignIn=$true}
-$password = $null
+try {
+    $created = New-MgUser -AccountEnabled:$true -DisplayName $row.DisplayName `
+      -UserPrincipalName $row.UserPrincipalName -MailNickname $row.MailNickname `
+      -PasswordProfile @{Password=$password;ForceChangePasswordNextSignIn=$true} -ErrorAction Stop
+} finally {
+    $password = $null
+    $secure = $null
+}
+New-Item -ItemType Directory -Path ./private-state -Force | Out-Null
+$created | Select-Object Id, UserPrincipalName | Export-Csv `
+  -LiteralPath ./private-state/created-users.csv -NoTypeInformation -Append
 $created | Select-Object Id, UserPrincipalName
 ```
 
@@ -124,11 +153,18 @@ $created | Select-Object Id, UserPrincipalName
 
 **Where:** Your recorded exact test account ID.
 
-Disable only the selected lab account and read it back. Test membership/session/app access separately if you add those features; AccountEnabled=false is not proof that every previously issued token or downstream account is immediately gone.
+Recheck the test tenant, select an ID saved by this lab and compare its current UPN with the private journal before disabling it. Test downstream membership/session/application effects separately; the directory field alone does not prove immediate token revocation.
 
 ```powershell
-Update-MgUser -UserId 'YOUR_CREATED_LAB_USER_ID' -AccountEnabled:$false
-Get-MgUser -UserId 'YOUR_CREATED_LAB_USER_ID' -Property Id,UserPrincipalName,AccountEnabled
+Assert-LabContext -TenantId $expectedTenant
+$createdIds = Import-Csv -LiteralPath ./private-state/created-users.csv
+$targetId = 'YOUR_CREATED_LAB_USER_ID'
+$target = @($createdIds | Where-Object Id -eq $targetId)
+if ($target.Count -ne 1) { throw 'Select exactly one ID recorded by this lab' }
+$actual = Get-MgUser -UserId $targetId -Property Id,UserPrincipalName,AccountEnabled
+if ($actual.UserPrincipalName -ne $target[0].UserPrincipalName) { throw 'Recorded user does not match' }
+Update-MgUser -UserId $targetId -AccountEnabled:$false
+Get-MgUser -UserId $targetId -Property Id,UserPrincipalName,AccountEnabled
 ```
 
 **Check before continuing:** The selected user is disabled and unrelated accounts are unchanged.
@@ -165,5 +201,6 @@ The numbered steps describe a build procedure. Local syntax checks, an accepted 
 
 - [learn.microsoft.com — get-started](https://learn.microsoft.com/en-us/powershell/microsoftgraph/get-started)
 - [learn.microsoft.com — users-lifecycle-workflow-overview](https://learn.microsoft.com/en-us/entra/identity/users/users-lifecycle-workflow-overview)
+- [learn.microsoft.com — get-mgcontext?view=graph-powershell-1.0](https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.authentication/get-mgcontext?view=graph-powershell-1.0)
 
 The walkthrough layout follows the prerequisites → creation/configuration → test → verification → troubleshooting → cleanup pattern of the [Splunk project reference](https://github.com/davidharris6/splunk-siem-log-analysis). Its Splunk-specific settings are not copied into unrelated projects.
