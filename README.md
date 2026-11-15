@@ -29,7 +29,7 @@ Use Microsoft Entra for sign-in, check permissions on the server, and handle acc
 - Implemented bounded joiner/mover/leaver operations with exact-person binding, saved results and readback. Password-reset automation remained disabled rather than being represented as accepted.
 - Used managed identities and GitHub OIDC for service/deployment access, reducing reliance on stored cloud credentials.
 
-This case study draws on a workforce/operations platform I designed and implemented. Organization details and records are excluded. The public code makes selected patterns reproducible; the screenshots show a working local demonstration with fictional data. [Validation scope](docs/VALIDATION.md) separates that evidence from testing against the actual cloud service.
+This case study draws on a workforce/operations platform I designed and implemented. Organization details and records are excluded. The public code makes selected patterns reproducible; the local demonstration uses fictional data, and its placeholder screenshots have been removed. [Validation scope](docs/VALIDATION.md) separates that evidence from testing against the actual cloud service.
 
 ### Actual implementation code
 
@@ -341,7 +341,7 @@ python -B -m unittest discover -s tests -p test_domain.py -k leaver -v
 
 ### 4. Visible results
 
-The dashboard runs the same domain code as the CLI. Desktop/mobile rendering, all three tabs, rerunning the demonstration, cross-origin write rejection and unlisted-file rejection were checked. The screenshots are captured from those runs.
+The dashboard runs the same domain code as the CLI. Desktop/mobile rendering, all three tabs, rerunning the demonstration, cross-origin write rejection and unlisted-file rejection were checked. Those local test results remain documented; proper application screenshots are deferred.
 
 Expected access denials are successful negative tests. Cloud permissions, network connectivity and provider integrations need their own acceptance evidence.
 
