@@ -1,10 +1,12 @@
 # Cloud Identity & Access Automation
 
+[![Cloud identity and access — illustrated overview](docs/diagrams/architecture.png)](docs/diagrams/architecture.svg)
+
+[View SVG](docs/diagrams/architecture.svg) · [Download PNG](docs/diagrams/architecture.png) · [Edit in draw.io](docs/diagrams/architecture.drawio)
+
 **Give people the access they need, and remove it reliably when their role changes.**
 
 [The problem](#the-business-problem) · [The solution](#the-solution) · [What was built](#what-was-built) · [Proof it works](#proof-it-works) · [Run it](#run-it-locally) · [Step by step](#step-by-step)
-
-![Overview of the working demonstration](docs/images/01-overview.png)
 
 ## The Business Problem
 
@@ -237,7 +239,7 @@ Inspect the actual create/disable events and save a value-free lifecycle diagram
 | Failure boundary | A meaningful denied, malformed, stale or failed case | Not yet recorded |
 | Recovery / cleanup | What you restored or removed and what remains billed | Not yet recorded |
 
-Capture your own architecture/configuration, one working result and one failure/recovery result. Keep tokens, credentials, personal records and private identifiers out of public screenshots. Existing portfolio images are references, not evidence that you performed these steps.
+Capture your own architecture/configuration, one working result and one failure/recovery result. Keep tokens, credentials, personal records and private identifiers out of public screenshots. The architecture diagram explains the design; record your own results rather than treating it as execution evidence.
 
 ### Troubleshooting order
 
@@ -273,16 +275,7 @@ A short walkthrough of the process, with technical instructions and evidence lim
 
 ## Architecture
 
-```mermaid
-flowchart LR
-  Browser -->|MSAL access token| API
-  Entra[Microsoft Entra ID] --> Browser
-  API -->|Read current role and person| Records[(Business records)]
-  API -->|Exact operation| Queue[(Lifecycle journal)]
-  Queue --> Worker[Separate directory worker]
-  Worker -->|Narrow Graph permission| Entra
-  Worker --> Audit[(Operation receipts)]
-```
+[View the illustrated project overview](docs/diagrams/architecture.svg).
 
 ## What Was Built
 
@@ -305,7 +298,6 @@ npm run test:source
 ```
 
 The selected original tests run offline. [Validation](docs/VALIDATION.md) records current counts and distinguishes them from historical hosted evidence.
-
 
 **Current local checks:** 7 extracted-source tests + 16 portable tests passed · 6 demonstration checks · 2 Terraform tests using simulated cloud responses.
 
@@ -350,8 +342,6 @@ python -B -m unittest discover -s tests -p test_domain.py -k leaver -v
 ### 4. Visible results
 
 The dashboard runs the same domain code as the CLI. Desktop/mobile rendering, all three tabs, rerunning the demonstration, cross-origin write rejection and unlisted-file rejection were checked. The screenshots are captured from those runs.
-
-![Positive and negative checks from the running demonstration](docs/images/02-validation.png)
 
 Expected access denials are successful negative tests. Cloud permissions, network connectivity and provider integrations need their own acceptance evidence.
 
@@ -439,7 +429,6 @@ Successful sign-in did not prove the application could execute its SQL statement
 ## Repository Map
 
 `reference/` contains extracted implementation logic and original selected tests.
-
 
 ```text
 infra/               Terraform source, example inputs and mock plan tests

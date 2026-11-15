@@ -108,7 +108,6 @@ python -B -m unittest discover -s tests -p test_domain.py -k operator_requires_a
 
 The test names identify the expected denial. `OK` means the application rejected the request as expected; it does not mean the denied request received access. No real Entra token or employee account is needed.
 
-
 ## Troubleshooting and cleanup
 
 If imports fail, confirm that the command uses the virtual environment's Python. If port 8011 is occupied, choose an available port with `--port` and open the corresponding `127.0.0.1` URL. If Docker's CLI is installed but the engine is unreachable, start/check the Linux engine rather than reinstalling the application.

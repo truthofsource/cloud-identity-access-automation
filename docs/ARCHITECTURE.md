@@ -13,16 +13,15 @@ A healthcare-services workforce platform needed one sign-in layer and a reliable
 
 ## Processing path
 
-```mermaid
-flowchart TD
-  Browser -->|MSAL access token| API
-  Entra[Microsoft Entra ID] --> Browser
-  API -->|Read current role and person| Records[(Business records)]
-  API -->|Exact operation| Queue[(Lifecycle journal)]
-  Queue --> Worker[Separate directory worker]
-  Worker -->|Narrow Graph permission| Entra
-  Worker --> Audit[(Operation receipts)]
-```
+1. **Browser** → **API (MSAL access token)**.
+2. **Microsoft Entra ID** → **Browser**.
+3. **API** → **Business records (Read current role and person)**.
+4. **API** → **Lifecycle journal (Exact operation)**.
+5. **Lifecycle journal** → **Separate directory worker**.
+6. **Separate directory worker** → **Microsoft Entra ID (Narrow Graph permission)**.
+7. **Separate directory worker** → **Operation receipts**.
+
+[View the illustrated project overview](diagrams/architecture.svg).
 
 ## Portable reference boundary
 
